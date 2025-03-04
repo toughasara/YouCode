@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouCode - Tableau de bord administrateur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <div class="bg-primary-700 text-white w-64 flex-shrink-0 hidden md:block">
+            <div class="p-4 text-center">
+                <span class="text-white text-2xl font-bold">YouCode</span>
+                <p class="text-primary-200 text-sm">Administration</p>
+            </div>
+            <div class="border-t border-primary-600"></div>
+            <nav class="mt-5">
+                <a href="#" class="flex items-center py-3 px-6 text-white hover:bg-primary-800 hover:bg-opacity-30 transition">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Tableau de bord
+                </a>
+                <a href="#" class="flex items-center py-3 px-6 text-white hover:bg-primary-800 hover:bg-opacity-30 transition">
+                    <i class="fas fa-user-graduate mr-3"></i>
+                    Candidats
+                </a>
+                <a href="#" class="flex items-center py-3 px-6 text-white hover:bg-primary-800 hover:bg-opacity-30 transition">
+                    <i class="fas fa-users-cog mr-3"></i>
+                    Staff
+                </a>
+                <a href="#" class="flex items-center py-3 px-6 text-white bg-primary-800 bg-opacity-50">
+                    <i class="fas fa-clipboard-question mr-3"></i>
+                    Quiz
+                </a>
+                <a href="#" class="flex items-center py-3 px-6 text-white hover:bg-primary-800 hover:bg-opacity-30 transition">
+                    <i class="fas fa-calendar-check mr-3"></i>
+                    Tests présentiels
+                </a>
+                <a href="#" class="flex items-center py-3 px-6 text-white hover:bg-primary-800 hover:bg-opacity-30 transition">
+                    <i class="fas fa-cog mr-3"></i>
+                    Paramètres
+                </a>
+            </nav>
+            <div class="absolute bottom-0 w-64 border-t border-primary-600 p-4">
+                <a href="#" class="flex items-center text-white opacity-75 hover:opacity-100">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Déconnexion
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile sidebar toggle -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-primary-700 text-white p-4">
+            <div class="flex justify-around">
+                <a href="#" class="text-center px-3">
+                    <i class="fas fa-tachometer-alt text-lg"></i>
+                    <p class="text-xs">Accueil</p>
+                </a>
+                <a href="#" class="text-center px-3">
+                    <i class="fas fa-user-graduate text-lg"></i>
+                    <p class="text-xs">Candidats</p>
+                </a>
+                <a href="#" class="text-center px-3">
+                    <i class="fas fa-users-cog text-lg"></i>
+                    <p class="text-xs">Staff</p>
+                </a>
+                <a href="#" class="text-center px-3 text-primary-300">
+                    <i class="fas fa-clipboard-question text-lg"></i>
+                    <p class="text-xs">Quiz</p>
+                </a>
+                <a href="#" class="text-center px-3">
+                    <i class="fas fa-ellipsis-h text-lg"></i>
+                    <p class="text-xs">Plus</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Ajouter un Quiz</h2>
+            <form action="{{ route('quizzes.store') }}" method="POST">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="titre" class="block text-sm font-medium text-gray-700 mb-1">Titre du quiz</label>
+                        <input type="text" id="titre" name="titre" placeholder="Entrez un titre pour le quiz" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <div>
+                        <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                        <select id="category_id" name="category_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->titre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="duree" class="block text-sm font-medium text-gray-700 mb-1">Durée (minutes)</label>
+                        <input type="number" id="duree" name="duree" placeholder="15" min="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <div>
+                        <label for="score" class="block text-sm font-medium text-gray-700 mb-1">Score minimum (%)</label>
+                        <input type="number" id="score" name="score" placeholder="60" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg">
+                        Enregistrer le quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="flex-1 overflow-x-hidden overflow-y-auto">
+            <!-- Topbar -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center">
+                        <button id="sidebarToggle" class="text-gray-500 focus:outline-none md:hidden">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="text-xl font-semibold text-gray-700 ml-4">Gestion des Quiz</h1>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <button class="flex text-sm rounded-full focus:outline-none">
+                                <img class="h-8 w-8 rounded-full object-cover" src="/api/placeholder/32/32" alt="Admin">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="p-6">
+                <!-- Welcome Message -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Gestion des Quiz</h2>
+                    <p class="text-gray-600">Créez et gérez les quiz d'évaluation pour les candidats de YouCode.</p>
+                </div>
+
+                <!-- Quiz Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-clipboard-list text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500 text-sm">Quiz disponibles</p>
+                                <h3 class="text-2xl font-semibold text-gray-800">2</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-user-check text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500 text-sm">Candidats évalués</p>
+                                <h3 class="text-2xl font-semibold text-gray-800">42</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-trophy text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-500 text-sm">Score moyen</p>
+                                <h3 class="text-2xl font-semibold text-gray-800">68%</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Quiz button -->
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Liste des Quiz</h3>
+                    <a href="#/quiz/create" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg flex items-center transition">
+                        <i class="fas fa-plus mr-2"></i>
+                        Ajouter un quiz
+                    </a>
+                </div>
+
+                <!-- List of Quizzes -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Titre
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Catégorie
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Durée
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Nombre de questions
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Score min.
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Statut
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Quiz 1 -->
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">Quiz de Mathématiques</div>
+                                    <div class="text-sm text-gray-500">Évaluation des compétences en mathématiques</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">Mathématiques</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">15 minutes</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">12</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">60%</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Actif
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="#" class="text-primary-600 hover:text-primary-800 mr-3">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <!-- Quiz 2 -->
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">Quiz de Logique</div>
+                                    <div class="text-sm text-gray-500">Test de raisonnement logique et analytique</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">Logique</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">20 minutes</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">15</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">70%</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Actif
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="#" class="text-primary-600 hover:text-primary-800 mr-3">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="#" class="text-indigo-600 hover:text-indigo-800 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Quiz Form Preview -->
+                <!-- <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Formulaire d'ajout de quiz</h3>
+                    <form id="previewForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titre du quiz</label>
+                                <input type="text" id="title" name="title" placeholder="Entrez un titre pour le quiz" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                            </div>
+                            <div>
+                                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                                <select id="category" name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                    <option value="">Sélectionnez une catégorie</option>
+                                    <option value="mathematics">Mathématiques</option>
+                                    <option value="logic">Logique</option>
+                                    <option value="programming">Programmation</option>
+                                    <option value="language">Langues</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div>
+                                <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Durée (minutes)</label>
+                                <input type="number" id="duration" name="duration" placeholder="15" min="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                            </div>
+                            <div>
+                                <label for="min_score" class="block text-sm font-medium text-gray-700 mb-1">Score minimum (%)</label>
+                                <input type="number" id="min_score" name="min_score" placeholder="60" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                            </div>
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                                <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                    <option value="active">Actif</option>
+                                    <option value="inactive">Inactif</option>
+                                    <option value="draft">Brouillon</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="description" name="description" rows="3" placeholder="Décrivez le contenu et l'objectif du quiz" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500"></textarea>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-4">
+                            <h4 class="text-md font-medium text-gray-800 mb-4">Questions</h4>
+                            
+                            <div class="bg-gray-50 p-4 rounded-md mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-sm font-medium text-gray-700">Question 1</label>
+                                    <button type="button" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                                <input type="text" placeholder="Entrez votre question" class="w-full px-3 py-2 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                
+                                <div class="ml-4 mt-2">
+                                    <div class="flex items-center mb-2">
+                                        <input type="radio" name="correct_answer_1" value="1" class="mr-2">
+                                        <input type="text" placeholder="Option 1" class="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                    </div>
+                                    <div class="flex items-center mb-2">
+                                        <input type="radio" name="correct_answer_1" value="2" class="mr-2">
+                                        <input type="text" placeholder="Option 2" class="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                    </div>
+                                    <button type="button" class="text-primary-600 hover:text-primary-800 text-sm mt-1">
+                                        <i class="fas fa-plus mr-1"></i> Ajouter une option
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="bg-primary-50 hover:bg-primary-100 text-primary-700 font-medium py-2 px-4 rounded-md flex items-center transition">
+                                <i class="fas fa-plus mr-2"></i>
+                                Ajouter une question
+                            </button>
+                        </div>
+
+                        <div class="flex justify-end mt-6">
+                            <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg mr-3">
+                                Annuler
+                            </button>
+                            <button type="button" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg">
+                                Enregistrer le quiz
+                            </button>
+                        </div>
+                    </form>
+                </div> -->
+
+                <!-- Recent Quiz Results -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Résultats récents</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Candidat
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Quiz
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Score
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Statut
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Ahmed Alami</div>
+                                                <div class="text-sm text-gray-500">ahmed.alami@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Quiz de Mathématiques</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">75%</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">26/02/2025</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Réussi
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Sara Nouri</div>
+                                                <div class="text-sm text-gray-500">sara.nouri@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Quiz de Logique</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">82%</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">25/02/2025</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Réussi
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Karim Belkhir</div>
+                                                <div class="text-sm text-gray-500">karim.belkhir@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Quiz de Mathématiques</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">55%</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">24/02/2025</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Échoué
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Toggle mobile sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
