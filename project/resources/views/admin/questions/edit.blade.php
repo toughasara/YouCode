@@ -5,7 +5,7 @@
 @section('content')
 <div class="bg-white rounded-lg shadow-sm p-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Modifier la Question</h2>
-    <form action="{{ route('questions.update', [$quiz, $question]) }}" method="POST">
+    <form action="{{ route('quizzes.questions.update', [$quiz, $question]) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="mb-6">

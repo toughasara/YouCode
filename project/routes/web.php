@@ -21,10 +21,14 @@ use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\QuizHistoryController;
+
 
 
 Route::resource('quizzes', QuizController::class);
-Route::resource('questions', QuestionController::class)->shallow();
+Route::post('quizzes/{quiz}/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+Route::resource('quizzes.questions', QuestionController::class)->shallow()->except('destroy');
+Route::post('/quiz-history', [QuizHistoryController::class, 'store']);
 
 
 // rediriction apret login

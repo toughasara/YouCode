@@ -5,7 +5,7 @@
 @section('content')
 <div class="bg-white rounded-lg shadow-sm p-6">
     <!-- <h2 class="text-xl font-semibold text-gray-800 mb-4">Ajouter une Question</h2> -->
-    <form action="{{ route('questions.store', $quiz) }}" method="POST">
+    <form action="{{ route('quizzes.questions.store', $quiz) }}" method="POST">
         @csrf
         <div>
             <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>

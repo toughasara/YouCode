@@ -60,6 +60,7 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz)
     {
+        $quiz->load('questions');
         return view('Admin.quizzes.show', compact('quiz'));
     }
 

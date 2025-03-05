@@ -5,7 +5,7 @@
 @section('content')
 <div class="bg-white rounded-lg shadow-sm p-6">
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Questions du Quiz : {{ $quiz->titre }}</h2>
-    <a href="{{ route('questions.create', $quiz) }}" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg mb-6 inline-block">
+    <a href="{{ route('quizzes.questions.create', $quiz) }}" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg mb-6 inline-block">
         Ajouter une question
     </a>
     <div class="space-y-4">
@@ -16,9 +16,9 @@
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-600">{{ $question->points }} points</span>
                         <!-- Bouton de suppression -->
-                        <form action="{{ route('questions.destroy', [$quiz->id, $question->id]) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?');">
+                        <form action="{{ route('questions.destroy',$quiz, $question) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette question ?');">
                             @csrf
-                            @method('DELETE')
+                            @method('POST')
                             <button type="submit" class="text-red-600 hover:text-red-800">
                                 <i class="fas fa-trash"></i> Supprimer
                             </button>

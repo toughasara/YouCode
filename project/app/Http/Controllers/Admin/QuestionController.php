@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Quiz;
+use App\Models\Question;
 use App\Models\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -116,7 +117,7 @@ class QuestionController extends Controller
             ]);
         }
 
-        return redirect()->route('quizzes.show', $quiz)->with('success', 'Question mise à jour avec succès.');
+        return redirect()->route('quizzes.questions.show', $quiz)->with('success', 'Question mise à jour avec succès.');
     }
 
     /**
@@ -127,8 +128,8 @@ class QuestionController extends Controller
      */
     public function destroy(Quiz $quiz, Question $question)
     {
-        $question->reponses()->delete();
-        $question->delete();
+        $quiz->questions()->detach($question->id);
+
         return redirect()->route('quizzes.show', $quiz)->with('success', 'Question supprimée avec succès.');
     }
     
