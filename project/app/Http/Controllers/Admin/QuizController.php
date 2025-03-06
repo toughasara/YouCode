@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Quiz;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Http\Controllers\Admin\QuizController;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller

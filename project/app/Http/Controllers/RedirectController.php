@@ -11,12 +11,14 @@ class RedirectController extends Controller
     {
         $user = Auth::user();
 
+        // dd(Auth::user());
+
         if ($user->role->title === 'admin') {
             return redirect('/admin/dashboard');
         } elseif ($user->role->title === 'staff') {
             return redirect('/staff/dashboard');
         } elseif ($user->role->title === 'candidat') {
-            return redirect('/candidat/dashboard');
+            return redirect('/candidat/quiz');
         }
 
         return redirect('/home'); // Redirection par défaut
